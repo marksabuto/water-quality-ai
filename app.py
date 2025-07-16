@@ -1,8 +1,10 @@
 import streamlit as st
-import numpy as np
-import joblib
+import requests
 import pandas as pd
 import matplotlib.pyplot as plt
+import joblib
+
+API_URL = "http://127.0.0.1:8000/predict"  # Update if API is hosted elsewhere
 
 # Load the trained model
 model = joblib.load("water_quality_model.pkl")
@@ -21,8 +23,8 @@ st.markdown("Enter chemical values to check if the water is **safe to drink**.")
 # Sidebar: Prediction settings and water safety tips
 st.sidebar.header("⚙️ Prediction Settings")
 threshold = st.sidebar.slider(
-    "Set Prediction Threshold", 0.0, 1.0, 0.45, 0.01,
-    help="Lower threshold = more likely to classify as Safe. Adjust to control model sensitivity."
+    "Set Prediction Threshold (UI only)", 0.0, 1.0, 0.45, 0.01,
+    help="This threshold is for UI display only. The API uses 0.5 by default."
 )
 
 st.sidebar.markdown("---")
@@ -86,21 +88,28 @@ turbidity = st.number_input(
     help="Cloudiness. WHO guideline: <5 NTU."
 )
 
-# Predict button
 if st.button("Predict Potability"):
-    # Prepare input for prediction
-    features = np.array([[ph, hardness, solids, chloramines, sulfate,
-                          conductivity, organic_carbon, trihalomethanes, turbidity]])
-    # Predict probability of being safe (class 1)
-    proba = model.predict_proba(features)[0][1]
-    # Compare with threshold
-    if proba >= threshold:
-        result = "✅ Safe to Drink"
-    else:
-        result = "🚱 Not Safe to Drink"
-    # Display result and confidence
-    st.subheader(f"Prediction: {result}")
-    st.caption(f"Confidence (Safe): {proba:.2f}")
+    payload = {
+        "ph": ph,
+        "Hardness": hardness,
+        "Solids": solids,
+        "Chloramines": chloramines,
+        "Sulfate": sulfate,
+        "Conductivity": conductivity,
+        "Organic_carbon": organic_carbon,
+        "Trihalomethanes": trihalomethanes,
+        "Turbidity": turbidity
+    }
+    try:
+        response = requests.post(API_URL, json=payload)
+        if response.status_code == 200:
+            result = response.json()
+            st.subheader(f"Prediction: {'✅ Safe to Drink' if result['prediction'] else '🚱 Not Safe to Drink'}")
+            st.caption(f"Confidence (Safe): {result['probability_safe']:.2f}")
+        else:
+            st.error(f"API Error: {response.status_code} - {response.text}")
+    except Exception as e:
+        st.error(f"Could not connect to prediction API: {e}")
 
 # ---
 # Feature importance (placeholder if not available)
