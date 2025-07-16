@@ -127,7 +127,7 @@ print(response.json())
 ## 🧪 Testing & Quality
 - Unit tests for data preprocessing, model loading, and prediction
 - Modular code with clear docstrings and type hints
-- (Optional) GitHub Actions for CI/CD
+- GitHub Actions for CI/CD
 
 ---
 
@@ -145,7 +145,7 @@ Contributions are welcome! To contribute:
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## 📬 Contact
-For questions or suggestions, please open an issue or contact [your.email@example.com](mailto:your.email@example.com).
+For questions or suggestions, please open an issue or contact [marksabuto@gmail.com](mailto:marksabuto@gmail.com).
 
 ---
 This project supports UN SDG 6: Clean Water and Sanitation by providing a low-cost digital tool to detect water safety.
