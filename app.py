@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import joblib
 
-API_URL = "http://127.0.0.1:8000/predict"  # Update if API is hosted elsewhere
+API_URL = "https://water-quality-ai.onrender.com/predict"  # Update if API is hosted elsewhere
 
 # Load the trained model
 model = joblib.load("water_quality_model.pkl")
